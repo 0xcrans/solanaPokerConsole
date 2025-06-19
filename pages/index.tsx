@@ -713,7 +713,6 @@ const PokerContractConsole = () => {
                 <span className="font-medium">Framework:</span> Anchor
               </div>
               <div>
-                <span className="font-medium">Version:</span> v1.0.0<br/>
                 <span className="font-medium">Status:</span> <StatusBadge status="success">Active</StatusBadge>
               </div>
             </div>
