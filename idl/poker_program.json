@@ -1,0 +1,1692 @@
+{
+  "address": "3VWxtZ5CCjG2eKH1FNQxDkCKU57QMk5SZ61Gx6pcsHne",
+  "metadata": {
+    "name": "poker_program",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "collect_rent",
+      "docs": [
+        "Collect Rent - admin może zebrać rent z pustych stołów (players = 0)",
+        "Authority only: House.authority może zamknąć wszystkie puste stoły + Dealery",
+        "Rent z zamkniętych stołów i Dealerów idzie do House"
+      ],
+      "discriminator": [
+        52,
+        165,
+        96,
+        165,
+        131,
+        15,
+        160,
+        36
+      ],
+      "accounts": [
+        {
+          "name": "table_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  97,
+                  98,
+                  108,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "table_vault.table_id",
+                "account": "TableVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "dealer",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  97,
+                  108,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "table_vault.table_id",
+                "account": "TableVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "house",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  117,
+                  115,
+                  101
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "deposit_sol",
+      "docs": [
+        "Deposit SOL - wpłata do playerVault"
+      ],
+      "discriminator": [
+        108,
+        81,
+        78,
+        117,
+        125,
+        155,
+        56,
+        200
+      ],
+      "accounts": [
+        {
+          "name": "player_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  121,
+                  101,
+                  114,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "deposit_to_game",
+      "docs": [
+        "DEPOSIT TO GAME - deklaracja gotowości gracza z wpłaceniem buy-in + mintowanie tokenów",
+        "Każdy gracz wywołuje gdy jest ready do gry (multiple calls możliwe - dokupywanie)",
+        "Fee: 1% od buy_in_amount + buy-in amount wpłacany do TableVault",
+        "NOWE: Mintuje tokeny w systemie Dealer (1 SOL = 10,000 tokenów)",
+        "Max buy-in: 3 SOL (z template)"
+      ],
+      "discriminator": [
+        250,
+        164,
+        120,
+        131,
+        56,
+        191,
+        133,
+        137
+      ],
+      "accounts": [
+        {
+          "name": "table_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  97,
+                  98,
+                  108,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "table_vault.table_id",
+                "account": "TableVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "dealer",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  97,
+                  108,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "table_vault.table_id",
+                "account": "TableVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "player_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  121,
+                  101,
+                  114,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "house",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  117,
+                  115,
+                  101
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "player",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "buy_in_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_challenger_template",
+      "docs": [
+        "Initialize Challenger Template - inicjalizacja szablonu stołu Challenger",
+        "ZAKTUALIZOWANE: Max buy-in zwiększony do 3 SOL"
+      ],
+      "discriminator": [
+        158,
+        156,
+        53,
+        156,
+        21,
+        111,
+        141,
+        196
+      ],
+      "accounts": [
+        {
+          "name": "template",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  97,
+                  98,
+                  108,
+                  101,
+                  95,
+                  116,
+                  101,
+                  109,
+                  112,
+                  108,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  104,
+                  97,
+                  108,
+                  108,
+                  101,
+                  110,
+                  103,
+                  101,
+                  114
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_house",
+      "docs": [
+        "Inicjalizacja House account (tylko raz)"
+      ],
+      "discriminator": [
+        180,
+        46,
+        86,
+        125,
+        135,
+        107,
+        214,
+        28
+      ],
+      "accounts": [
+        {
+          "name": "house",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  117,
+                  115,
+                  101
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "join_game",
+      "docs": [
+        "Join Game - dołączenie do istniejącego stołu (rezerwacja miejsca)",
+        "🚫 WYMAGANIE: Stół musi mieć ≥1 gracza (nie można dołączyć do pustego)",
+        "Zapewnia ekonomię creation fee - ludzie muszą otwierać nowe stoły"
+      ],
+      "discriminator": [
+        107,
+        112,
+        18,
+        38,
+        56,
+        173,
+        60,
+        128
+      ],
+      "accounts": [
+        {
+          "name": "table_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  97,
+                  98,
+                  108,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "table_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "player_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  121,
+                  101,
+                  114,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "house",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  117,
+                  115,
+                  101
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "player",
+          "writable": true,
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "table_id",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "kick_out_player",
+      "docs": [
+        "Kick Out Player - usunięcie gracza z 0 tokenów (tylko House Authority)",
+        "Używane przez backend gdy gracz ma 0 tokenów i nie chce się dokupić",
+        "Nie wypłaca żadnych środków - gracz blokował tylko miejsce przy stole"
+      ],
+      "discriminator": [
+        126,
+        145,
+        6,
+        66,
+        86,
+        89,
+        44,
+        169
+      ],
+      "accounts": [
+        {
+          "name": "dealer",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  97,
+                  108,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "table_vault.table_id",
+                "account": "TableVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "table_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  97,
+                  98,
+                  108,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "table_vault.table_id",
+                "account": "TableVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "player_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  121,
+                  101,
+                  114,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "player_owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "house",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  117,
+                  115,
+                  101
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "player_owner",
+          "docs": [
+            "on player_vault that checks player_vault.key() == player_vault_pda"
+          ]
+        },
+        {
+          "name": "authority",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "player_vault_pda",
+          "type": "pubkey"
+        },
+        {
+          "name": "_player_owner",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "leave_table",
+      "docs": [
+        "Leave Table - opuszczenie stołu z transferem środków według tokenów z Dealera",
+        "NOWE: Wypłata bazuje na tokenach, nie na buy_in_amount"
+      ],
+      "discriminator": [
+        163,
+        153,
+        94,
+        194,
+        19,
+        106,
+        113,
+        32
+      ],
+      "accounts": [
+        {
+          "name": "table_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  97,
+                  98,
+                  108,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "table_vault.table_id",
+                "account": "TableVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "dealer",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  97,
+                  108,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "table_vault.table_id",
+                "account": "TableVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "player_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  121,
+                  101,
+                  114,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "player"
+              }
+            ]
+          }
+        },
+        {
+          "name": "house",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  117,
+                  115,
+                  101
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "player",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "open_challenger_table",
+      "docs": [
+        "Open Challenger Table - otwieranie nowego stołu z Challenger template + Dealer",
+        "OWNER: Table należy do House Authority (nie do twórcy)",
+        "Automatycznie dodaje twórcę jako pierwszego gracza",
+        "Fees: 0.01 SOL creation fee → House",
+        "NOWE: Inicjalizuje także Dealer account dla zarządzania tokenami"
+      ],
+      "discriminator": [
+        116,
+        219,
+        229,
+        244,
+        123,
+        65,
+        94,
+        105
+      ],
+      "accounts": [
+        {
+          "name": "table_counter",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  97,
+                  98,
+                  108,
+                  101,
+                  95,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116,
+                  101,
+                  114
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "template",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  97,
+                  98,
+                  108,
+                  101,
+                  95,
+                  116,
+                  101,
+                  109,
+                  112,
+                  108,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  104,
+                  97,
+                  108,
+                  108,
+                  101,
+                  110,
+                  103,
+                  101,
+                  114
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "table_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  97,
+                  98,
+                  108,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "table_counter.count",
+                "account": "TableCounter"
+              }
+            ]
+          }
+        },
+        {
+          "name": "dealer",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  97,
+                  108,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "table_counter.count",
+                "account": "TableCounter"
+              }
+            ]
+          }
+        },
+        {
+          "name": "player_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  121,
+                  101,
+                  114,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "creator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "house",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  117,
+                  115,
+                  101
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "redistribute_tokens",
+      "docs": [
+        "Redistribute Tokens - redystrybucja tokenów po rozdaniu (tylko House Authority)",
+        "Używane przez backend po każdym rozdaniu do aktualizacji balansów",
+        "Zachowuje zero-sum invariant: suma tokenów musi pozostać stała"
+      ],
+      "discriminator": [
+        198,
+        34,
+        62,
+        25,
+        253,
+        46,
+        197,
+        223
+      ],
+      "accounts": [
+        {
+          "name": "dealer",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  97,
+                  108,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "table_vault.table_id",
+                "account": "TableVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "table_vault",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  97,
+                  98,
+                  108,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "table_vault.table_id",
+                "account": "TableVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "house",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  117,
+                  115,
+                  101
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "new_balances",
+          "type": {
+            "vec": {
+              "defined": {
+                "name": "PlayerTokenBalance"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "withdraw_from_house",
+      "docs": [
+        "Wypłata z House account (tylko dla authority)"
+      ],
+      "discriminator": [
+        166,
+        199,
+        13,
+        102,
+        212,
+        193,
+        155,
+        28
+      ],
+      "accounts": [
+        {
+          "name": "house",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  117,
+                  115,
+                  101
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "house"
+          ]
+        },
+        {
+          "name": "destination",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "withdraw_sol",
+      "docs": [
+        "Withdraw SOL - wypłata z playerVault"
+      ],
+      "discriminator": [
+        145,
+        131,
+        74,
+        136,
+        65,
+        137,
+        42,
+        38
+      ],
+      "accounts": [
+        {
+          "name": "player_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  108,
+                  97,
+                  121,
+                  101,
+                  114,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "player_vault"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Dealer",
+      "discriminator": [
+        132,
+        134,
+        166,
+        186,
+        102,
+        153,
+        187,
+        86
+      ]
+    },
+    {
+      "name": "House",
+      "discriminator": [
+        21,
+        145,
+        94,
+        109,
+        254,
+        199,
+        210,
+        151
+      ]
+    },
+    {
+      "name": "PlayerVault",
+      "discriminator": [
+        37,
+        59,
+        99,
+        224,
+        234,
+        233,
+        179,
+        185
+      ]
+    },
+    {
+      "name": "TableCounter",
+      "discriminator": [
+        225,
+        195,
+        35,
+        175,
+        255,
+        135,
+        104,
+        140
+      ]
+    },
+    {
+      "name": "TableTemplate",
+      "discriminator": [
+        206,
+        121,
+        22,
+        64,
+        20,
+        239,
+        210,
+        128
+      ]
+    },
+    {
+      "name": "TableVault",
+      "discriminator": [
+        7,
+        14,
+        145,
+        251,
+        151,
+        162,
+        15,
+        125
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "TableFull",
+      "msg": "Table is full"
+    },
+    {
+      "code": 6001,
+      "name": "TableEmpty",
+      "msg": "Table is empty - cannot join empty table"
+    },
+    {
+      "code": 6002,
+      "name": "PlayerNotAtTable",
+      "msg": "Player is not at this table"
+    },
+    {
+      "code": 6003,
+      "name": "PlayerAlreadyAtTable",
+      "msg": "Player is already at this table"
+    },
+    {
+      "code": 6004,
+      "name": "PlayerAlreadyReady",
+      "msg": "Player is already ready"
+    },
+    {
+      "code": 6005,
+      "name": "InsufficientBalance",
+      "msg": "Insufficient balance"
+    },
+    {
+      "code": 6006,
+      "name": "GameAlreadyActive",
+      "msg": "Game is already active"
+    },
+    {
+      "code": 6007,
+      "name": "GameNotActive",
+      "msg": "Game is not active"
+    },
+    {
+      "code": 6008,
+      "name": "NotEnoughPlayers",
+      "msg": "Not enough players to start game (minimum 2)"
+    },
+    {
+      "code": 6009,
+      "name": "Unauthorized",
+      "msg": "Unauthorized action"
+    },
+    {
+      "code": 6010,
+      "name": "Overflow",
+      "msg": "Arithmetic overflow"
+    },
+    {
+      "code": 6011,
+      "name": "Underflow",
+      "msg": "Arithmetic underflow"
+    },
+    {
+      "code": 6012,
+      "name": "MinimumDepositNotMet",
+      "msg": "Minimum deposit amount not met (0.12 SOL required)"
+    },
+    {
+      "code": 6013,
+      "name": "InvalidDepositAmount",
+      "msg": "Invalid deposit amount (minimum 0.12 SOL)"
+    },
+    {
+      "code": 6014,
+      "name": "InvalidBuyInAmount",
+      "msg": "Invalid buy-in amount (below table minimum)"
+    },
+    {
+      "code": 6015,
+      "name": "CannotActDuringGame",
+      "msg": "Cannot perform action during active game"
+    },
+    {
+      "code": 6016,
+      "name": "InvalidTableParams",
+      "msg": "Invalid table parameters"
+    },
+    {
+      "code": 6017,
+      "name": "HouseNotInitialized",
+      "msg": "House account not initialized"
+    },
+    {
+      "code": 6018,
+      "name": "TableNotEmpty",
+      "msg": "Table is not empty - cannot cleanup"
+    },
+    {
+      "code": 6019,
+      "name": "InvalidTemplate",
+      "msg": "Invalid table template"
+    },
+    {
+      "code": 6020,
+      "name": "PlayerAlreadySeated",
+      "msg": "Player is already seated at another table"
+    },
+    {
+      "code": 6021,
+      "name": "PlayerNotSeated",
+      "msg": "Player is not seated at any table"
+    },
+    {
+      "code": 6022,
+      "name": "PlayerAlreadyInGame",
+      "msg": "Player is already in an active game"
+    },
+    {
+      "code": 6023,
+      "name": "InvalidTableOwner",
+      "msg": "Invalid table owner - table must be owned by House Authority"
+    },
+    {
+      "code": 6024,
+      "name": "ExceedsMaxBuyIn",
+      "msg": "Maximum buy-in exceeded"
+    },
+    {
+      "code": 6025,
+      "name": "TokenSumMismatch",
+      "msg": "Token sum mismatch - total must remain constant"
+    },
+    {
+      "code": 6026,
+      "name": "TokenIntegrityViolation",
+      "msg": "Token integrity violation"
+    },
+    {
+      "code": 6027,
+      "name": "TooManyPlayers",
+      "msg": "Too many players for redistribution"
+    },
+    {
+      "code": 6028,
+      "name": "DealerNotInitialized",
+      "msg": "Dealer not initialized"
+    },
+    {
+      "code": 6029,
+      "name": "InvalidTokenAmount",
+      "msg": "Invalid token amount"
+    },
+    {
+      "code": 6030,
+      "name": "PlayerHasTokens",
+      "msg": "Cannot kick out player - player still has tokens"
+    },
+    {
+      "code": 6031,
+      "name": "InvalidPlayerVault",
+      "msg": "Invalid player vault - vault PDA does not match owner"
+    }
+  ],
+  "types": [
+    {
+      "name": "Dealer",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "table_id",
+            "type": "u64"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "players_tokens",
+            "type": {
+              "array": [
+                {
+                  "defined": {
+                    "name": "PlayerTokenEntry"
+                  }
+                },
+                7
+              ]
+            }
+          },
+          {
+            "name": "total_tokens_issued",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "House",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "total_collected",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PlayerTokenBalance",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "player_vault_pda",
+            "type": "pubkey"
+          },
+          {
+            "name": "tokens",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PlayerTokenEntry",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "player_vault_pda",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "tokens",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PlayerVault",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "is_seated",
+            "type": "bool"
+          },
+          {
+            "name": "is_ready",
+            "type": "bool"
+          },
+          {
+            "name": "current_table_id",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "buy_in_amount",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TableCounter",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "count",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TableTemplate",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "min_buy_in",
+            "type": "u64"
+          },
+          {
+            "name": "max_buy_in",
+            "type": "u64"
+          },
+          {
+            "name": "max_players",
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TableVault",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "table_id",
+            "type": "u64"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "template_name",
+            "type": "string"
+          },
+          {
+            "name": "max_players",
+            "type": "u8"
+          },
+          {
+            "name": "min_buy_in",
+            "type": "u64"
+          },
+          {
+            "name": "max_buy_in",
+            "type": "u64"
+          },
+          {
+            "name": "creation_fee",
+            "type": "u64"
+          },
+          {
+            "name": "start_fee",
+            "type": "u64"
+          },
+          {
+            "name": "players",
+            "type": {
+              "array": [
+                {
+                  "option": "pubkey"
+                },
+                7
+              ]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ]
+}
