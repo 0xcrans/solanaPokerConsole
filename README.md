@@ -1,6 +1,6 @@
-# Solana Blockchain Poker Platform
+# Console to Poker on Solana
 
-A poker platform built on Solana blockchain using Anchor framework. Players can join tables, deposit funds, and play poker with secure token-based betting system.
+Built on Solana using Anchor framework. Players can join tables, deposit funds, and play poker with secure token-based betting system.
 
 ## 🏗️ Architecture
 
